@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14.1-alpine
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      PGDATA: /data/postgres
+    cap_add:
+      - SYS_NICE
+    healthcheck:
+      test: pg_isready
+      interval: 5s
+      timeout: 1s
+      retries: 3
+    ports:
+      - '4242:5432'
+    networks:
+      - postgres
+    restart: unless-stopped
+    volumes:
+      - postgres:/data/postgres
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
